@@ -1,5 +1,8 @@
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import javax.swing.plaf.nimbus.State;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,7 +10,9 @@ import java.io.InputStream;
 /**
  * Analyzer for U.S. state renewable electricity data using ArrayList + Scanner + File I/O.
  * CSV expected: Location,TotalGenTWh,PercentRenewable,RenewableGenTWh,PercentOfUSRenewable,CO2MtPerTWh
+ * 
  */
+
 public class StateRenewableAnalyzer {
     private ArrayList<StateRenewable> states;
 
@@ -25,16 +30,32 @@ public class StateRenewableAnalyzer {
      * @throws IOException if the file is not found
      */
     public void readFromFile(String filename) throws IOException {
-        //I had to make the Scanner this way -- I will explain why
+        Scanner scanner = new Scanner(new File(filename)); 
         InputStream is = getClass().getResourceAsStream(filename);
-        Scanner scanner = new Scanner(is);
+        scanner.nextLine();
+        while(scanner.hasNextLine()){
+            String line = scanner.nextLine();
+            String[] items = line.split(",");
+            StateRenewable temp = new StateRenewable(items[0], 
+                Double.parseDouble(items[1]), 
+                Double.parseDouble(items[2]), 
+                Double.parseDouble(items[3]), 
+                Double.parseDouble(items[4]), 
+                Double.parseDouble(items[5]));
+                states.add(temp);
+        }
+        
+        System.out.println(states.size());
+        scanner.close();
     }
 
     /**
      * Display all states in the list.
      */
     public void displayAllStates() {
-  
+        for(StateRenewable c: states){
+            System.out.println(c.getName());
+        }
     }
 
     /**
@@ -43,7 +64,13 @@ public class StateRenewableAnalyzer {
      * @return ArrayList of StateRenewable objects meeting the threshold
      */
     public ArrayList<StateRenewable> displayAbovePercent(double threshold) {
-        return null;
+        ArrayList<StateRenewable> temp = new ArrayList<StateRenewable>();
+        for(StateRenewable c: states){
+            if(c.isAboveRenewableThreshold(threshold)){
+                temp.add(c);
+            }
+        }
+        return temp;
     }
 
     /**
@@ -51,6 +78,15 @@ public class StateRenewableAnalyzer {
      * @return StateRenewable with highest percent, or null if list is empty
      */
     public StateRenewable findHighestPercentRenewable() {
+        if(states.size()!=0){
+        StateRenewable max = states.get(0);
+        for(StateRenewable c: states){
+            if(c.getPercentRenewable() > max.getPercentRenewable()){
+                max = c;
+            }
+        }
+        return max;
+        }
         return null;
     }
 
@@ -59,7 +95,18 @@ public class StateRenewableAnalyzer {
      * @return StateRenewable with lowest percent, or null if list is empty
      */
     public StateRenewable findLowestPercentRenewable() {
-        return null;
+        if(states.size()!=0){
+          StateRenewable min = states.get(0);
+        for(StateRenewable c: states){
+            if(c.getPercentRenewable() < min.getPercentRenewable()){
+                min = c;
+            }
+        }
+        return min;
+    }
+    return null;
+
+
     }
 
     /**
@@ -67,7 +114,14 @@ public class StateRenewableAnalyzer {
      * @return average percent, or 0 if list is empty
      */
     public double calculateAveragePercentRenewable() {
-        return -1;
+        if(states.size()!=0){
+        double totalPercentRenewable = 0;
+        for(StateRenewable c: states){
+            totalPercentRenewable += c.getPercentRenewable();
+        }
+        return totalPercentRenewable/states.size();
+        }
+        return 0;
     }
 
     /**
@@ -75,7 +129,11 @@ public class StateRenewableAnalyzer {
      * @return sum of renewableGenTWh values
      */
     public double totalRenewableGenTWh() {
-        return -1;
+        double total = 0;
+       for(StateRenewable c: states){
+           total += c.getRenewableGenTWh();
+       }
+       return total;
     }
 
     /**
@@ -83,6 +141,15 @@ public class StateRenewableAnalyzer {
      * @return StateRenewable with highest renewableGenTWh, or null if list is empty
      */
     public StateRenewable findHighestRenewableGen() {
+        if(states.size()!=0){
+        StateRenewable max = states.get(0);
+        for(StateRenewable c: states){
+            if(c.getRenewableGenTWh() > max.getRenewableGenTWh()){
+                max = c;
+            }
+        }
+        return max;
+        }
         return null;
     }
 
@@ -90,7 +157,9 @@ public class StateRenewableAnalyzer {
      * Display summary statistics.
      */
     public void displayStatistics() {
-
+        for(StateRenewable c: states){
+            System.out.println(c);
+        }
     }
 
     /**
@@ -100,4 +169,23 @@ public class StateRenewableAnalyzer {
     public int getTotalStates() {
         return states.size();
     }
+
+    public static void main(String[] args) {
+        StateRenewableAnalyzer analyzer = new StateRenewableAnalyzer();
+
+        try {
+            // Read the data file
+            analyzer.readFromFile("renewable-energy-data.csv");
+
+            // Display various analyses
+            // analyzer.displayAllCountries();
+            // analyzer.displayByRegion("Asia");
+            analyzer.displayStatistics();
+
+        } catch (IOException e) {
+            System.err.println("Spell it correctly: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }
+
