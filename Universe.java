@@ -18,13 +18,14 @@ public class Universe{
         stars.add(s);
       }
       System.out.println(stars.get(stars.size() - 1).getNumberOfStars());
+      //10, 20, 30, 40
     }
 
-    System.out.println(stars.get(0).getNumberOfStars());
-    System.out.println(stars.get(10).getNumberOfStars());
-    System.out.println(Star.getNumberOfStars());
-    System.out.println(stars.get((int)(Math.random()*stars.size())).getNumberOfStars());
-    System.out.println(stars.get(stars.size() - 1).getNumberOfStars());
+    System.out.println(stars.get(0).getNumberOfStars()); //40
+    System.out.println(stars.get(10).getNumberOfStars());//40
+    System.out.println(Star.getNumberOfStars());//40
+    System.out.println(stars.get((int)(Math.random()*stars.size())).getNumberOfStars());//40
+    System.out.println(stars.get(stars.size() - 1).getNumberOfStars());//40
   }
 
 }

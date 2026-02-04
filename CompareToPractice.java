@@ -18,5 +18,14 @@ class Main {
       }
     };
     //we will play with compareTo here
+    char c = 'a';
+    int ascii = (int)c;
+    System.out.println(ascii);
+    String s = "d";
+    String s1 = "D";
+    int result = s.compareTo(s1);
+    System.out.println(result);
+    Collections.sort(words);
+    System.out.println(words);
   }
 }
